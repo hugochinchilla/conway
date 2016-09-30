@@ -1,24 +1,61 @@
 from conway import World
-
-#Each cell with one or no neighbors dies, as if by solitude.
-#Each cell with four or more neighbors dies, as if by overpopulation.
-#Each cell with two or three neighbors survives.
-
-def test_create_world_given_1_1():
-  world = World(1,1)
-  assert world.pos(0,0) == False
-
-# single cell starves
-#[X] [ ]
-#def test_single_cell_starves():
-#  world = World(1,1)
-#  world.populate(1,1)
-#  world.tick()
-#  assert world[0][0] = False
+import pytest
 
 
-# two cells starve to death
-#[XX] []
+def test_cells_match():
+    assert (1,1) == (1,1)
+
+def test_a_world_with_1_cell_at_3_5():
+    world = World()
+    world.insert((3,5))
+    assert (3,5) in world
+    assert (1,1) not in world
+    assert world.cells == 1
+
+def test_a_world_with_2_cells():
+    world = World()
+    world.insert((1,5))
+    world.insert((900,52))
+
+    assert (1,5) in world
+    assert (900,52) in world
+    assert (1,1) not in world
+    assert world.cells == 2
+
+
+def test_single_cell_starves():
+    world = World()
+    world.insert((1,1))
+    world.tick()
+    assert (1,1) not in world
+
+
+def test_two_neighbor_cells_starve():
+    world = World()
+    world.insert((1,1))
+    world.insert((1,2))
+    world.tick()
+    assert (1,1) not in world
+    assert (1,2) not in world
+
+def est_3_neighbor_cells_one_survive():
+    world = World()
+    world.insert((1,1))
+    world.insert((1,2))
+    world.insert((1,3))
+    world.tick()
+    assert (1,1) not in world
+    assert (1,2) in world
+    assert (1,3) not in world
+
+
+def test_neigbors_calculation():
+    world = World()
+    assert world.neighbors_of((1,1)) == [
+        (0,0), (0,1), (0,2),
+        (1,0),        (1,2),
+        (2,0), (2,1), (2,2)]
+
 
 # tree cells meke one survive
 #[XXX] [ X ]

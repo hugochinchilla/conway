@@ -1,13 +1,45 @@
+from collections import defaultdict
 
-class World(object):
 
-    def __init__(self, width, height):
-        self.world = [[False]]
-        #self.width = width
-        #self.height = height
-        #self.rows = []
-        #for row in height:
-        #    self.rows.append([False for x in range(0, width)])
+class World(dict):
+    def insert(self, cell):
+        datadict = {cell: None}
+        self.update(datadict)
 
-    def pos(self, x, y):
-        return self.world[x][y]
+    @property
+    def cells(self):
+        return len(self)
+
+    def tick(self):
+        counter = defaultdict(lambda: [])
+        for cell in self.keys():
+            counter[cell].extend(self.alive_neighbors(cell))
+            counter[cell] = set(counter[cell])
+
+        new_world = {}
+        for cell,nbrs in counter.items():
+            if len(nbrs) >= 2:
+                new_world[cell] = None
+
+        self.clear()
+        self.update(new_world)
+
+
+    def alive_neighbors(self, cell):
+        alive = []
+        for cell in self.neighbors_of(cell):
+            if cell in self:
+                alive.append(cell)
+
+        return alive
+
+    def neighbors_of(self, cell):
+        rows = []
+        for x in range(-1,2):
+            for y in range(-1,2):
+                if (x,y) != (0,0):
+                    i,j = cell
+                    rows.append((i+x, j+y))
+        return rows
+
+
