@@ -17,8 +17,13 @@ class World(dict):
             counter[cell] = set(counter[cell])
 
         new_world = {}
+        for cell in self.keys():
+            count = len(counter[cell])
+            if count >= 2:
+                new_world[cell] = None
+
         for cell,nbrs in counter.items():
-            if len(nbrs) >= 2:
+            if len(nbrs) >= 3:
                 new_world[cell] = None
 
         self.clear()

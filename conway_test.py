@@ -38,15 +38,18 @@ def test_two_neighbor_cells_starve():
     assert (1,1) not in world
     assert (1,2) not in world
 
-def est_3_neighbor_cells_one_survive():
+def test_3_neighbor_cells():
     world = World()
+    world.insert((1,0))
     world.insert((1,1))
     world.insert((1,2))
-    world.insert((1,3))
     world.tick()
-    assert (1,1) not in world
-    assert (1,2) in world
-    assert (1,3) not in world
+    assert (1,0) not in world
+    assert (1,1) in world
+    assert (1,2) not in world
+    # generated ones
+    assert (0,1) in world
+    assert (2,1) in world
 
 
 def test_neigbors_calculation():
