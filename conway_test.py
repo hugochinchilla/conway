@@ -2,6 +2,13 @@ from conway import World
 import pytest
 
 
+def test_neigbors_calculation():
+    world = World()
+    assert world.neighbors_of((1,1)) == [
+        (0,0), (0,1), (0,2),
+        (1,0),        (1,2),
+        (2,0), (2,1), (2,2)]
+
 def test_cells_match():
     assert (1,1) == (1,1)
 
@@ -31,44 +38,91 @@ def test_single_cell_starves():
 
 
 def test_two_neighbor_cells_starve():
+    """
+    in:  [XX]
+    out: [  ]
+    """
     world = World()
-    world.insert((1,1))
-    world.insert((1,2))
+    world.insert((0,0))
+    world.insert((0,1))
     world.tick()
-    assert (1,1) not in world
-    assert (1,2) not in world
+    assert world.cells == 0
 
-def test_3_neighbor_cells():
+def test_empty_cell_with_3_neighbors_becomes_populated():
+    """
+    in:  [XX]
+         [X·]
+
+    out: [XX]
+         [XX]
+    """
+    world = World()
+    world.insert((0,0))
+    world.insert((0,1))
+    world.insert((1,0))
+    world.tick()
+    assert world.cells == 4
+
+
+def test_3_inline_cells():
+    """
+    tree cells meke one survive:
+
+    in:  [···]
+         [XXX]
+         [···]
+
+    out: [·X·]
+         [·X·]
+         [·X·]
+    """
     world = World()
     world.insert((1,0))
     world.insert((1,1))
     world.insert((1,2))
     world.tick()
-    assert (1,0) not in world
-    assert (1,1) in world
-    assert (1,2) not in world
-    # generated ones
+    assert world.cells == 3
     assert (0,1) in world
+    assert (1,1) in world
     assert (2,1) in world
 
+def test_3_inline_horzontal_cells_become_3_vertical_cells():
+    """
+    in:  [···]
+         [XXX]
+         [···]
 
-def test_neigbors_calculation():
+    out: [·X·]
+         [·X·]
+         [·X·]
+    """
     world = World()
-    assert world.neighbors_of((1,1)) == [
-        (0,0), (0,1), (0,2),
-        (1,0),        (1,2),
-        (2,0), (2,1), (2,2)]
+    world.insert((1,0))
+    world.insert((1,1))
+    world.insert((1,2))
+    world.tick()
+    assert world.cells == 3
+    assert (0,1) in world
+    assert (1,1) in world
+    assert (2,1) in world
 
+def est_cell_dies_from_overpopulation():
+    """
+    in:  [·X·]
+         [XXX]
+         [·X·]
 
-# tree cells meke one survive
-#[XXX] [ X ]
-
-# empty cells with 3 neighbors becomes populated
-#[X  ] [   ]
-#[   ] [ X ]
-#[X X] [   ]
-
-# a cell with 4 or more neightbors dies from overpopulation
-#[X X] [   ]
-#[ X ] [   ]
-#[X X] [   ]
+    out: [XXX]
+         [X·X]
+         [XXX]
+    """
+    world = World()
+    world.insert((0,1))
+    world.insert((1,0))
+    world.insert((1,1))
+    world.insert((1,2))
+    world.insert((2,1))
+    world.tick()
+    for cell in world.keys():
+        print(cell)
+    assert world.cells == 8

@@ -3,18 +3,25 @@ from collections import defaultdict
 
 class World(dict):
     def insert(self, cell):
-        datadict = {cell: None}
-        self.update(datadict)
+        self.update({cell: None})
 
     @property
     def cells(self):
         return len(self)
 
+    def __iter__(self):
+        yield from self.keys()
+
+    def __repr__(self):
+        return repr(self.keys())
+
     def tick(self):
         counter = defaultdict(lambda: [])
         for cell in self.keys():
-            counter[cell].extend(self.alive_neighbors(cell))
-            counter[cell] = set(counter[cell])
+            for nbr in self.neighbors_of(cell):
+                if nbr not in counter:
+                    counter[nbr].extend(self.alive_neighbors(nbr))
+                    counter[nbr] = set(counter[nbr])
 
         new_world = {}
         for cell in self.keys():
@@ -26,6 +33,8 @@ class World(dict):
             if len(nbrs) >= 3:
                 new_world[cell] = None
 
+        print(self)
+        print(new_world.keys())
         self.clear()
         self.update(new_world)
 
