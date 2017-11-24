@@ -24,17 +24,14 @@ class World(dict):
                     counter[nbr] = set(counter[nbr])
 
         new_world = {}
-        for cell in self.keys():
-            count = len(counter[cell])
-            if count >= 2:
+        for cell,nbrs in counter.items():
+            if cell in self and  1 < len(nbrs) < 4:
                 new_world[cell] = None
 
         for cell,nbrs in counter.items():
-            if len(nbrs) >= 3:
+            if cell not in self and len(nbrs) == 3:
                 new_world[cell] = None
 
-        print(self)
-        print(new_world.keys())
         self.clear()
         self.update(new_world)
 

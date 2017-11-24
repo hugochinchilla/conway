@@ -106,7 +106,7 @@ def test_3_inline_horzontal_cells_become_3_vertical_cells():
     assert (1,1) in world
     assert (2,1) in world
 
-def est_cell_dies_from_overpopulation():
+def test_cell_dies_from_overpopulation():
     """
     in:  [·X·]
          [XXX]
@@ -123,6 +123,30 @@ def est_cell_dies_from_overpopulation():
     world.insert((1,2))
     world.insert((2,1))
     world.tick()
-    for cell in world.keys():
-        print(cell)
     assert world.cells == 8
+    assert (1,1) not in world
+
+def test_glider():
+    """
+    in:  [·X·]
+         [··X]
+         [XXX]
+
+    out: [···]
+         [X·X]
+         [·XX]
+         [·X·]
+    """
+    world = World()
+    world.insert((0,1))
+    world.insert((1,2))
+    world.insert((2,0))
+    world.insert((2,1))
+    world.insert((2,2))
+    world.tick()
+    assert world.cells == 5
+    assert (1,0) in world
+    assert (1,2) in world
+    assert (2,1) in world
+    assert (2,2) in world
+    assert (2,1) in world
