@@ -5,14 +5,14 @@ class World():
     def __init__(self):
         self._cells = set()
 
-    def __iter__(self):
-        yield from self._cells
-
     def __repr__(self):
         return repr(self._cells)
 
     def __has__(self, cell):
         return cell in self._cells
+
+    def __iter__(self):
+        yield from self._cells
 
     def insert(self, cell):
         self._cells.add(cell)
@@ -22,16 +22,17 @@ class World():
         return len(self._cells)
 
     def tick(self):
-        counter = defaultdict(lambda: [])
+        counter = defaultdict(lambda: set())
         for cell in self._cells:
-            for nbr in self.neighbors_of(cell):
-                if nbr not in counter:
-                    counter[nbr].extend(self.alive_neighbors(nbr))
-                    counter[nbr] = set(counter[nbr])
+            for n1 in self.neighbors_of(cell):
+                for n2 in self.neighbors_of(n1):
+                    # neighbor is alive add it to counter set
+                    if n2 in self._cells:
+                        counter[n1].add(n2)
 
         new_world = set()
         for cell, nbrs in counter.items():
-            if cell in self and  1 < len(nbrs) < 4:
+            if cell in self._cells and  1 < len(nbrs) < 4:
                 new_world.add(cell)
 
         for cell, nbrs in counter.items():
@@ -39,14 +40,6 @@ class World():
                 new_world.add(cell)
 
         self._cells = new_world
-
-    def alive_neighbors(self, cell):
-        alive = set()
-        for cell in self.neighbors_of(cell):
-            if cell in self:
-                alive.add(cell)
-
-        return alive
 
     def neighbors_of(self, cell):
         rows = set()
