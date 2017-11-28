@@ -1,6 +1,3 @@
-from collections import defaultdict
-
-
 class World():
     def __init__(self):
         self._cells = set()
@@ -22,9 +19,10 @@ class World():
         return len(self._cells)
 
     def tick(self):
-        counter = defaultdict(lambda: set())
+        counter = {}
         for cell in self._cells:
             for n1 in self.neighbors_of(cell):
+                counter[n1] = set()
                 for n2 in self.neighbors_of(n1):
                     # neighbor is alive add it to counter set
                     if n2 in self._cells:
