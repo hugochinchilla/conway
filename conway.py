@@ -41,9 +41,9 @@ class World():
 
     def neighbors_of(self, cell):
         rows = set()
-        for x in range(-1,2):
-            for y in range(-1,2):
-                if (x,y) != (0,0):
-                    i,j = cell
+        for x in range(-1, 2):
+            for y in range(-1, 2):
+                if (x, y) != (0, 0):
+                    i, j = cell
                     rows.add((i+x, j+y))
         return rows
