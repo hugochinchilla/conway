@@ -1,56 +1,58 @@
 from collections import defaultdict
 
 
-class World(dict):
-    def insert(self, cell):
-        self.update({cell: None})
-
-    @property
-    def cells(self):
-        return len(self)
+class World():
+    def __init__(self):
+        self._cells = set()
 
     def __iter__(self):
-        yield from self.keys()
+        yield from self._cells
 
     def __repr__(self):
-        return repr(self.keys())
+        return repr(self._cells)
+
+    def __has__(self, cell):
+        return cell in self._cells
+
+    def insert(self, cell):
+        self._cells.add(cell)
+
+    @property
+    def size(self):
+        return len(self._cells)
 
     def tick(self):
         counter = defaultdict(lambda: [])
-        for cell in self.keys():
+        for cell in self._cells:
             for nbr in self.neighbors_of(cell):
                 if nbr not in counter:
                     counter[nbr].extend(self.alive_neighbors(nbr))
                     counter[nbr] = set(counter[nbr])
 
-        new_world = {}
-        for cell,nbrs in counter.items():
+        new_world = set()
+        for cell, nbrs in counter.items():
             if cell in self and  1 < len(nbrs) < 4:
-                new_world[cell] = None
+                new_world.add(cell)
 
-        for cell,nbrs in counter.items():
-            if cell not in self and len(nbrs) == 3:
-                new_world[cell] = None
+        for cell, nbrs in counter.items():
+            if cell not in self._cells and len(nbrs) == 3:
+                new_world.add(cell)
 
-        self.clear()
-        self.update(new_world)
-
+        self._cells = new_world
 
     def alive_neighbors(self, cell):
-        alive = []
+        alive = set()
         for cell in self.neighbors_of(cell):
             if cell in self:
-                alive.append(cell)
+                alive.add(cell)
 
         return alive
 
     def neighbors_of(self, cell):
-        rows = []
+        rows = set()
         for x in range(-1,2):
             for y in range(-1,2):
                 if (x,y) != (0,0):
                     i,j = cell
-                    rows.append((i+x, j+y))
+                    rows.add((i+x, j+y))
         return rows
-
-

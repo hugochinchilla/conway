@@ -1,4 +1,4 @@
 .PHONY: test
 
 test:
-	py.test
+	python3 -m "pytest" -v
