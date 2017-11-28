@@ -30,7 +30,7 @@ class World():
 
         new_world = set()
         for cell, nbrs in counter.items():
-            if cell in self._cells and  1 < len(nbrs) < 4:
+            if cell in self._cells and 1 < len(nbrs) < 4:
                 new_world.add(cell)
 
         for cell, nbrs in counter.items():
